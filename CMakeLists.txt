@@ -15,13 +15,18 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets)
 find_package(Qt6 REQUIRED COMPONENTS Widgets)
 
-# Bison support for formula grammar
+# Bison and flesupport for formula grammar
 find_package(BISON)
+find_package(FLEX)
 
 # Paths for grammar files
 set(FORMULA_GRAMMAR_SRC ${CMAKE_SOURCE_DIR}/src/formula/formulagrammer.y)
 set(FORMULA_GRAMMAR_CPP ${CMAKE_SOURCE_DIR}/src/formula/formulagrammer.cpp)
 set(FORMULA_GRAMMAR_HPP ${CMAKE_SOURCE_DIR}/src/formula/formulagrammer.h)
+
+FLEX_TARGET(FormulaLexer ${CMAKE_SOURCE_DIR}/src/formula/formulalexer.l ${CMAKE_SOURCE_DIR}/src/formula/formulalexer.cpp)
+set(GENERATED_FORMULA_LEXER ${FLEX_FormulaLexer_OUTPUTS})
+
 
 if(BISON_FOUND)
     BISON_TARGET(FormulaGrammar ${FORMULA_GRAMMAR_SRC} ${FORMULA_GRAMMAR_CPP}
@@ -42,6 +47,8 @@ file(GLOB_RECURSE PROJECT_SOURCES
 qt_add_executable(${PROJECT_NAME}
     MANUAL_FINALIZATION
     ${PROJECT_SOURCES}
+    ${GENERATED_FORMULA_GRAMMAR}
+    ${FORMULA_GRAMMAR_HPP}
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Widgets)

@@ -129,72 +129,72 @@ formula:
 
 expression:
     expression PLUS expression {
-        $ = new shared_ptr<ExcelNode>(
+        $$ = new shared_ptr<ExcelNode>(
             make_shared<ExcelNode>(NODE_BINARY_OP, "+", *$1, *$3)
         );
     }
     | expression MINUS expression {
-        $ = new shared_ptr<ExcelNode>(
+        $$ = new shared_ptr<ExcelNode>(
             make_shared<ExcelNode>(NODE_BINARY_OP, "-", *$1, *$3)
         );
     }
     | expression MULTIPLY expression {
-        $ = new shared_ptr<ExcelNode>(
+        $$ = new shared_ptr<ExcelNode>(
             make_shared<ExcelNode>(NODE_BINARY_OP, "*", *$1, *$3)
         );
     }
     | expression DIVIDE expression {
-        $ = new shared_ptr<ExcelNode>(
+        $$ = new shared_ptr<ExcelNode>(
             make_shared<ExcelNode>(NODE_BINARY_OP, "/", *$1, *$3)
         );
     }
     | expression POWER expression {
-        $ = new shared_ptr<ExcelNode>(
+        $$ = new shared_ptr<ExcelNode>(
             make_shared<ExcelNode>(NODE_BINARY_OP, "^", *$1, *$3)
         );
     }
     | expression CONCAT expression {
-        $ = new shared_ptr<ExcelNode>(
+        $$ = new shared_ptr<ExcelNode>(
             make_shared<ExcelNode>(NODE_BINARY_OP, "&", *$1, *$3)
         );
     }
     | expression EQ expression {
-        $ = new shared_ptr<ExcelNode>(
+        $$ = new shared_ptr<ExcelNode>(
             make_shared<ExcelNode>(NODE_BINARY_OP, "=", *$1, *$3)
         );
     }
     | expression NE expression {
-        $ = new shared_ptr<ExcelNode>(
+        $$ = new shared_ptr<ExcelNode>(
             make_shared<ExcelNode>(NODE_BINARY_OP, "<>", *$1, *$3)
         );
     }
     | expression LT expression {
-        $ = new shared_ptr<ExcelNode>(
+        $$ = new shared_ptr<ExcelNode>(
             make_shared<ExcelNode>(NODE_BINARY_OP, "<", *$1, *$3)
         );
     }
     | expression LE expression {
-        $ = new shared_ptr<ExcelNode>(
+        $$ = new shared_ptr<ExcelNode>(
             make_shared<ExcelNode>(NODE_BINARY_OP, "<=", *$1, *$3)
         );
     }
     | expression GT expression {
-        $ = new shared_ptr<ExcelNode>(
+        $$ = new shared_ptr<ExcelNode>(
             make_shared<ExcelNode>(NODE_BINARY_OP, ">", *$1, *$3)
         );
     }
     | expression GE expression {
-        $ = new shared_ptr<ExcelNode>(
+        $$ = new shared_ptr<ExcelNode>(
             make_shared<ExcelNode>(NODE_BINARY_OP, ">=", *$1, *$3)
         );
     }
     | PLUS expression %prec UPLUS {
-        $ = new shared_ptr<ExcelNode>(
+        $$ = new shared_ptr<ExcelNode>(
             make_shared<ExcelNode>(NODE_UNARY_OP, "+", *$2, nullptr)
         );
     }
     | MINUS expression %prec UMINUS {
-        $ = new shared_ptr<ExcelNode>(
+        $$ = new shared_ptr<ExcelNode>(
             make_shared<ExcelNode>(NODE_UNARY_OP, "-", *$2, nullptr)
         );
     }
@@ -208,25 +208,25 @@ term:
 
 factor:
     NUMBER {
-        $ = new shared_ptr<ExcelNode>(
+        $$ = new shared_ptr<ExcelNode>(
             make_shared<ExcelNode>(NODE_NUMBER, *$1)
         );
         delete $1;
     }
     | STRING {
-        $ = new shared_ptr<ExcelNode>(
+        $$ = new shared_ptr<ExcelNode>(
             make_shared<ExcelNode>(NODE_STRING, *$1)
         );
         delete $1;
     }
-    | cell_reference { $ = $1; }
-    | range { $ = $1; }
-    | function_call { $ = $1; }
+    | cell_reference { $$ = $1; }
+    | range { $$ = $1; }
+    | function_call { $$ = $1; }
     ;
 
 cell_reference:
     CELL_REF {
-        $ = new shared_ptr<ExcelNode>(
+        $$ = new shared_ptr<ExcelNode>(
             make_shared<ExcelNode>(NODE_CELL_REF, *$1)
         );
         delete $1;
@@ -237,7 +237,7 @@ range:
     CELL_REF COLON CELL_REF {
         auto node = make_shared<ExcelNode>(NODE_RANGE);
         node->value = *$1 + ":" + *$3;
-        $ = new shared_ptr<ExcelNode>(node);
+        $$ = new shared_ptr<ExcelNode>(node);
         delete $1;
         delete $3;
     }
@@ -247,31 +247,31 @@ function_call:
     FUNCTION_NAME LPAREN argument_list RPAREN {
         auto node = make_shared<ExcelNode>(NODE_FUNCTION, *$1);
         node->children = *$3;
-        $ = new shared_ptr<ExcelNode>(node);
+        $$ = new shared_ptr<ExcelNode>(node);
         delete $1;
         delete $3;
     }
     | FUNCTION_NAME LPAREN RPAREN {
         auto node = make_shared<ExcelNode>(NODE_FUNCTION, *$1);
-        $ = new shared_ptr<ExcelNode>(node);
+        $$ = new shared_ptr<ExcelNode>(node);
         delete $1;
     }
     ;
 
 argument_list:
     expression {
-        $ = new vector<shared_ptr<ExcelNode>>();
-        $->push_back(*$1);
+        $$ = new vector<shared_ptr<ExcelNode>>();
+        $$->push_back(*$1);
         delete $1;
     }
     | argument_list SEMICOLON expression {
         $1->push_back(*$3);
-        $ = $1;
+        $$ = $1;
         delete $3;
     }
     | argument_list COMMA expression {
         $1->push_back(*$3);
-        $ = $1;
+        $$ = $1;
         delete $3;
     }
     ;
