@@ -33,9 +33,14 @@ find_package(FLEX)
 #)
 #set(GENERATED_FORMULA_GRAMMAR ${BISON_FormulaGrammar_OUTPUTS})
 
-BISON_TARGET(FormulaParser ${CMAKE_SOURCE_DIR}/src/formula/formulagrammer.y ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp)
+BISON_TARGET(FormulaParser
+    ${CMAKE_SOURCE_DIR}/src/formula/formulagrammer.y
+    ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp
+    DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/formulagrammer.h
+)
 FLEX_TARGET(FormulaScanner ${CMAKE_SOURCE_DIR}/src/formula/formulalexer.l  ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp)
 ADD_FLEX_BISON_DEPENDENCY(FormulaScanner FormulaParser)
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 # Recursively find all .h and .hpp files in src/ and subdirectories
 file(GLOB_RECURSE PROJECT_SOURCES

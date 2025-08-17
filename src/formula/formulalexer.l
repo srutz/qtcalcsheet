@@ -7,10 +7,9 @@
 using namespace std;
 
 // Include the parser header (generated from the .y file)
-#include "formula_parser.tab.h"
+#include "formulagrammer.h"
 
 // Line number tracking
-int yylineno = 1;
 
 // German function names (case-insensitive)
 map<string, int> germanFunctions = {
