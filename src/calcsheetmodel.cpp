@@ -60,3 +60,9 @@ bool CalcSheetModel::setData(const QModelIndex &index, const QVariant &value, in
     emit dataChanged(index, index, {role});
     return true;    
 }
+
+Qt::ItemFlags CalcSheetModel::flags(const QModelIndex &index) const {
+    if (!index.isValid())
+        return Qt::NoItemFlags;
+    return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
+}

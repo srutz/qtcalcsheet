@@ -29,10 +29,19 @@ CalcSheet::CalcSheet(QWidget *parent) : QWidget(parent),
     tableView->setModel(model);
     tableView->verticalHeader()->setVisible(true);
 
+    // make table editable
+    tableView->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed | QAbstractItemView::AnyKeyPressed | QAbstractItemView::SelectedClicked);
+    tableView->verticalHeader()->setSectionsMovable(true);
+    tableView->horizontalHeader()->setSectionsMovable(true);
+
+    // navigate in table in excel style using keyboard
+    tableView->installEventFilter(this);
+
     // wire up table selection to input
     connect(tableView->selectionModel(), &QItemSelectionModel::currentChanged, this, [this](const QModelIndex &current) {
         this->input->setText(current.data().toString());
     });
+
 
     // wire up enter press in the input
     connect(input, &QLineEdit::returnPressed, this, [this]() {
