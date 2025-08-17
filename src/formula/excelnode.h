@@ -1,4 +1,6 @@
-#pragma once
+#ifndef EXCELNODE_H
+#define EXCELNODE_H
+
 #include <string>
 #include <vector>
 #include <memory>
@@ -31,3 +33,5 @@ struct ExcelNode {
         children.push_back(right);
     }
 };
+
+#endif // EXCELNODE_H

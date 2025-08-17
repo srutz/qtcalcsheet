@@ -7,8 +7,8 @@
 using namespace std;
 
 // Include the parser header (generated from the .y file)
-#include "formulagrammer.h"
 #include "excelnode.h"
+#include "formulagrammer.h"
 
 // Line number tracking
 
