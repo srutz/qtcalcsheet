@@ -1,6 +1,13 @@
 #include "cell.h"
 
+Cell::Cell() : m_type(CellType::EMPTY), m_value(QVariant()) {
+
+}
+
 Cell::Cell(const CellType &type, const QVariant &value) : m_type(type), m_value(value) {
+}
+
+Cell::Cell(const Cell &other) : m_type(other.m_type), m_value(other.m_value) {
 }
 
 CellType Cell::type() const { return m_type; }

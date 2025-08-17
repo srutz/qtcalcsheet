@@ -13,78 +13,7 @@ using namespace std;
 // Line number tracking
 
 // German function names (case-insensitive)
-map<string, int> germanFunctions = {
-    // Math functions
-    {"SUMME", FUNCTION_NAME},
-    {"MITTELWERT", FUNCTION_NAME},
-    {"ANZAHL", FUNCTION_NAME},
-    {"ANZAHL2", FUNCTION_NAME},
-    {"MAX", FUNCTION_NAME},
-    {"MIN", FUNCTION_NAME},
-    {"ABS", FUNCTION_NAME},
-    {"WURZEL", FUNCTION_NAME},
-    {"POTENZ", FUNCTION_NAME},
-    {"RUNDEN", FUNCTION_NAME},
-    {"AUFRUNDEN", FUNCTION_NAME},
-    {"ABRUNDEN", FUNCTION_NAME},
-    {"EXP", FUNCTION_NAME},
-    {"LN", FUNCTION_NAME},
-    {"LOG", FUNCTION_NAME},
-    {"SIN", FUNCTION_NAME},
-    {"COS", FUNCTION_NAME},
-    {"TAN", FUNCTION_NAME},
-    
-    // Logical functions
-    {"WENN", FUNCTION_NAME},
-    {"UND", FUNCTION_NAME},
-    {"ODER", FUNCTION_NAME},
-    {"NICHT", FUNCTION_NAME},
-    
-    // Lookup functions
-    {"SVERWEIS", FUNCTION_NAME},
-    {"WVERWEIS", FUNCTION_NAME},
-    {"INDEX", FUNCTION_NAME},
-    {"VERGLEICH", FUNCTION_NAME},
-    
-    // Text functions
-    {"LÄNGE", FUNCTION_NAME},
-    {"LAENGE", FUNCTION_NAME}, // Alternative spelling
-    {"LINKS", FUNCTION_NAME},
-    {"RECHTS", FUNCTION_NAME},
-    {"TEIL", FUNCTION_NAME},
-    {"GROSS", FUNCTION_NAME},
-    {"KLEIN", FUNCTION_NAME},
-    {"VERKETTEN", FUNCTION_NAME},
-    {"WECHSELN", FUNCTION_NAME},
-    {"ERSETZEN", FUNCTION_NAME},
-    
-    // Date/Time functions
-    {"HEUTE", FUNCTION_NAME},
-    {"JETZT", FUNCTION_NAME},
-    {"JAHR", FUNCTION_NAME},
-    {"MONAT", FUNCTION_NAME},
-    {"TAG", FUNCTION_NAME},
-    {"DATUM", FUNCTION_NAME},
-    {"ZEIT", FUNCTION_NAME},
-    {"WOCHENTAG", FUNCTION_NAME},
-    
-    // Statistical functions
-    {"STABW", FUNCTION_NAME},
-    {"VARIANZ", FUNCTION_NAME},
-    {"MEDIAN", FUNCTION_NAME},
-    {"MODUS", FUNCTION_NAME},
-    
-    // Financial functions
-    {"ZINS", FUNCTION_NAME},
-    {"ZW", FUNCTION_NAME},
-    {"BW", FUNCTION_NAME},
-    {"RMZ", FUNCTION_NAME},
-    
-    // Database functions
-    {"DBSUMME", FUNCTION_NAME},
-    {"DBMITTELWERT", FUNCTION_NAME},
-    {"DBANZAHL", FUNCTION_NAME}
-};
+extern map<string, int> germanFunctions; 
 
 // Convert string to uppercase for case-insensitive comparison
 string toUpper(const string& str) {

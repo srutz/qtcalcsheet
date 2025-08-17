@@ -10,12 +10,15 @@ enum CellType {
     DATE = 3,
     BOOLEAN = 4,
     FORMULA = 5,
-    ERROR = 6
+    ERROR = 6,
+    EMPTY = 7
 };
 
 class Cell {
 public:
+    Cell();
     Cell(const CellType &type, const QVariant &value);
+    Cell(const Cell &other);    
 
     CellType type() const;
     void setType(CellType type);

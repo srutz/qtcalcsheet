@@ -18,24 +18,15 @@ int CalcSheetModel::columnCount(const QModelIndex &parent) const { return m_colu
 
 QVariant CalcSheetModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid() || role != Qt::DisplayRole)
-        return QVariant();
-    int row = index.row();
-    int col = index.column();
-    int number = row + 1;
-    int square = number * number;
-    int previousSquare = (number - 1) * (number - 1);
-    switch (col)
-    {
-    case 0:
-        return QString::number(number);
-    case 1:
-        return QString::number(square);
-    case 2:
-        return QString::number(square - previousSquare);
-    default:
+    if (!index.isValid() || role != Qt::DisplayRole) {
         return QVariant();
     }
+    Coord coord(index.row(), index.column());
+    if (!m_data.contains(coord)) {
+        return QVariant(); // Return empty if no data exists for this cell
+    }
+    auto r = m_data.value(coord);
+    return r.value();
 }
 
 QVariant CalcSheetModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -52,4 +43,20 @@ QVariant CalcSheetModel::headerData(int section, Qt::Orientation orientation, in
         }
     }
     return QVariant();
+}
+
+bool CalcSheetModel::setData(const QModelIndex &index, const QVariant &value, int role) {
+    if (!index.isValid() || role != Qt::EditRole) {
+        return false;
+    }
+
+    auto raw = value.toString();
+    if (raw.isEmpty()) {
+        m_data.remove({index.row(), index.column()});
+    } else {
+        m_data[{index.row(), index.column()}] = Cell(CellType::STRING, raw);
+    }
+    
+    emit dataChanged(index, index, {role});
+    return true;    
 }

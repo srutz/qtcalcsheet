@@ -9,6 +9,8 @@ class CalcSheet : public QWidget
 {
     Q_OBJECT
     FormulaEngine *formulaEngine;
+    QTableView *tableView;
+    QLineEdit *input;
 
 public:
     CalcSheet(QWidget *parent = nullptr);
@@ -19,8 +21,6 @@ protected:
 
 private slots:
 
-private:
-    QTableView *tableView;
 
 };
 
