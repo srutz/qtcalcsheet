@@ -24,18 +24,15 @@ set(FORMULA_GRAMMAR_SRC ${CMAKE_SOURCE_DIR}/src/formula/formulagrammer.y)
 set(FORMULA_GRAMMAR_CPP ${CMAKE_SOURCE_DIR}/src/formula/formulagrammer.cpp)
 set(FORMULA_GRAMMAR_HPP ${CMAKE_SOURCE_DIR}/src/formula/formulagrammer.h)
 
+
 FLEX_TARGET(FormulaLexer ${CMAKE_SOURCE_DIR}/src/formula/formulalexer.l ${CMAKE_SOURCE_DIR}/src/formula/formulalexer.cpp)
 set(GENERATED_FORMULA_LEXER ${FLEX_FormulaLexer_OUTPUTS})
 
+BISON_TARGET(FormulaGrammar ${FORMULA_GRAMMAR_SRC} ${FORMULA_GRAMMAR_CPP}
+    DEFINES_FILE ${FORMULA_GRAMMAR_HPP}
+)
+set(GENERATED_FORMULA_GRAMMAR ${BISON_FormulaGrammar_OUTPUTS})
 
-if(BISON_FOUND)
-    BISON_TARGET(FormulaGrammar ${FORMULA_GRAMMAR_SRC} ${FORMULA_GRAMMAR_CPP}
-        DEFINES_FILE ${FORMULA_GRAMMAR_HPP}
-    )
-    set(GENERATED_FORMULA_GRAMMAR ${BISON_FormulaGrammar_OUTPUTS})
-else()
-    message(FATAL_ERROR "Bison not found. Please install Bison.")
-endif()
 # Recursively find all .h and .hpp files in src/ and subdirectories
 file(GLOB_RECURSE PROJECT_SOURCES
     "src/*.h"
