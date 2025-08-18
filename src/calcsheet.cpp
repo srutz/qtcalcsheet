@@ -72,8 +72,6 @@ CalcSheet::CalcSheet(QWidget *parent) : QWidget(parent),
         Util::selectNextTableRow(tableView);
         // also stop editing in the table
         QTimer::singleShot(100, this, [this]() {
-            //tableView->model()->revert();
-            //tableView->clearFocus();
             // invoke esc key press on the tableview
             QKeyEvent *event = new QKeyEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
             QCoreApplication::postEvent(tableView, event);
@@ -86,13 +84,6 @@ CalcSheet::CalcSheet(QWidget *parent) : QWidget(parent),
         //qDebug() << "Committed table change from" << topLeft << "to" << bottomRight;
     });
 
-    /*
-    connect(tableView->selectionModel(), &QItemSelectionModel::currentChanged, this, [this](const QModelIndex &current) {
-        auto v = current.data().toString();
-        qDebug() << "Current table value:" << v;
-        this->input->setText(v);
-    });
-    */
     // while typing in the inputfield also update the current table value
     connect(input, &QLineEdit::textChanged, this, [this](const QString &text) {
         QModelIndex current = tableView->currentIndex();
@@ -103,6 +94,15 @@ CalcSheet::CalcSheet(QWidget *parent) : QWidget(parent),
         // update the model
         auto model = const_cast<QAbstractItemModel*>(current.model());
         model->setData(current, text);
+    });
+
+    // handle cursor movements
+    connect(liveDelegate, &LiveEditDelegate::keyPressEvent, this, [this](const QModelIndex &index, QKeyEvent *event) {
+        if (event->key() == Qt::Key_Up) {
+            Util::selectPreviousTableRow(tableView);
+        } else if (event->key() == Qt::Key_Down) {
+            Util::selectNextTableRow(tableView);
+        }
     });
 }
 

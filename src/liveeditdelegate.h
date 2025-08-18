@@ -13,7 +13,9 @@ public:
     void setModelData(QWidget *editor, QAbstractItemModel *model,
                       const QModelIndex &index) const override;
 
+
 signals:
     void textEdited(const QModelIndex &index, const QString &text) const;
     void editingFinished(const QModelIndex &index, const QString &text) const;
+    void keyPressEvent(const QModelIndex &index, QKeyEvent *event) const;
 };

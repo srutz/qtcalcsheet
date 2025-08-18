@@ -4,6 +4,7 @@
 #include <QTableView>
 
 struct Util {
+    static void selectPreviousTableRow(QTableView *tableView);
     static void selectNextTableRow(QTableView *tableView);
 };
 
