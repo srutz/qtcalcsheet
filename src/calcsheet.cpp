@@ -5,6 +5,13 @@
 #include <QHeaderView>
 #include <QLineEdit>
 #include <QLabel>
+#include "calcsheet.h"
+#include "calcsheetmodel.h"
+#include "util.h"
+#include <QVBoxLayout>
+#include <QHeaderView>
+#include <QLineEdit>
+#include <QLabel>
 
 CalcSheet::CalcSheet(QWidget *parent) : QWidget(parent),
     formulaEngine(new FormulaEngine(this))
@@ -12,7 +19,9 @@ CalcSheet::CalcSheet(QWidget *parent) : QWidget(parent),
     this->tableView = new QTableView(this);
     auto mainLayout = new QVBoxLayout(this);
 
-    auto topLayout = new QHBoxLayout(this);
+    auto topPanel = new QWidget(this);
+    mainLayout->addWidget(topPanel);
+    auto topLayout = new QHBoxLayout(topPanel);
     topLayout->setContentsMargins(0, 0, 0, 0);
 
     auto topLabel = new QLabel("f(x)", this);
@@ -21,7 +30,6 @@ CalcSheet::CalcSheet(QWidget *parent) : QWidget(parent),
     this->input = new QLineEdit(this);
     topLayout->addWidget(input);
 
-    mainLayout->addLayout(topLayout);
     mainLayout->addWidget(tableView);
 
     // setup table
@@ -42,7 +50,6 @@ CalcSheet::CalcSheet(QWidget *parent) : QWidget(parent),
         this->input->setText(current.data().toString());
     });
 
-
     // wire up enter press in the input
     connect(input, &QLineEdit::returnPressed, this, [this]() {
         QModelIndex current = tableView->currentIndex();
@@ -50,11 +57,28 @@ CalcSheet::CalcSheet(QWidget *parent) : QWidget(parent),
             return;
         }
         // update the model
-        auto model = const_cast<QAbstractItemModel*>(current.model());
-        model->setData(current, input->text());
+        //auto model = const_cast<QAbstractItemModel*>(current.model());
+        //model->setData(current, input->text());
         // empty the input and advance selection one row
-        input->clear();
+        //input->clear();
         Util::selectNextTableRow(tableView);
+    });
+
+    // while typing in the table, also update the input field
+    connect(tableView->selectionModel(), &QItemSelectionModel::currentChanged, this, [this](const QModelIndex &current) {
+        auto v = current.data().toString();
+        qDebug() << "Current table value:" << v;
+        this->input->setText(v);
+    });
+    // while typing in the inputfield also update the current table value
+    connect(input, &QLineEdit::textChanged, this, [this](const QString &text) {
+        QModelIndex current = tableView->currentIndex();
+        if (!current.isValid()) {
+            return;
+        }
+        // update the model
+        auto model = const_cast<QAbstractItemModel*>(current.model());
+        model->setData(current, text);
     });
 }
 

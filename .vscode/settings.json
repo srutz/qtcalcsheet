@@ -29,6 +29,7 @@
             "string": "cpp",
             "__split_buffer": "cpp",
             "qobject": "cpp",
-            "qimage": "cpp"
+            "qimage": "cpp",
+            "qtableview": "cpp"
         },
 }

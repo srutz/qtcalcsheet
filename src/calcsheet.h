@@ -21,7 +21,6 @@ protected:
 
 private slots:
 
-
 };
 
 #endif // CALCSHEET_H

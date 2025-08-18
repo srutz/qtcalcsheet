@@ -22,10 +22,14 @@ public:
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
 
+signals:
+    void commitData();
+
 private:
     int m_rows = 1000;
     int m_columns = 26 * 26;
     QHash<Coord, Cell> m_data;
+
 };
 
 #endif /* CALCSHEETMODEL_H */
