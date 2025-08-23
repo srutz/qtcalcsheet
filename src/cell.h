@@ -3,6 +3,8 @@
 #define CELL_H
 
 #include <QVariant>
+#include <QString>
+#include <QLocale>
 
 enum CellType {
     STRING = 1,
@@ -16,6 +18,8 @@ enum CellType {
 
 class Cell {
 public:
+    static Cell valueOf(const QLocale &locale, const QString &raw);
+
     Cell();
     Cell(const CellType &type, const QVariant &value);
     Cell(const Cell &other);    

@@ -25,3 +25,10 @@ void Util::selectNextTableRow(QTableView *tableView) {
         tableView->scrollTo(next);
     }
 }
+
+QVariant Util::parseNumber(const QLocale &locale, const QString &text) {
+    // parse the text using the locale
+    bool ok;
+    auto n = locale.toDouble(text, &ok);
+    return ok ? QVariant(n) : QVariant();  
+}

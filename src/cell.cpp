@@ -1,7 +1,40 @@
 #include "cell.h"
+#include "util.h"
+#include <QDate>
+
+Cell Cell::valueOf(const QLocale &locale, const QString &raw) {
+    QString trimmed = raw.trimmed();
+    if (trimmed.isEmpty()) {
+        return Cell(CellType::EMPTY, QVariant());
+    }
+    // Check for formula
+    if (trimmed.startsWith('=')) {
+        return Cell(CellType::FORMULA, trimmed.mid(1).trimmed());
+    }
+    // Check for boolean
+    if (trimmed.compare("TRUE", Qt::CaseInsensitive) == 0) {
+        return Cell(CellType::BOOLEAN, true);
+    }
+    if (trimmed.compare("FALSE", Qt::CaseInsensitive) == 0) {
+        return Cell(CellType::BOOLEAN, false);
+    }
+    // Check for number
+    {
+        auto n = Util::parseNumber(locale, trimmed);
+        if (n.isValid() && (n.type() == QVariant::Double || n.type() == QVariant::Int || n.type() == QVariant::LongLong)) {
+            return Cell(CellType::NUMBER, n);
+        }
+    }
+    // Check for date (simple ISO format check)
+    QDate date = QDate::fromString(trimmed, Qt::ISODate);
+    if (date.isValid()) {
+        return Cell(CellType::DATE, date);
+    }
+    // Default to string
+    return Cell(CellType::STRING, trimmed);
+}
 
 Cell::Cell() : m_type(CellType::EMPTY), m_value(QVariant()) {
-
 }
 
 Cell::Cell(const CellType &type, const QVariant &value) : m_type(type), m_value(value) {

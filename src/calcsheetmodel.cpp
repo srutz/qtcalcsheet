@@ -16,6 +16,17 @@ int CalcSheetModel::rowCount(const QModelIndex &parent) const { return m_rows; }
 
 int CalcSheetModel::columnCount(const QModelIndex &parent) const { return m_columns; }
 
+QLocale CalcSheetModel::locale() const{
+    return m_locale;
+};
+
+void CalcSheetModel::setLocale(const QLocale &locale) {
+    if (m_locale != locale) {
+        m_locale = locale;
+    }
+}
+
+
 QVariant CalcSheetModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid() || role != Qt::DisplayRole) {
@@ -54,7 +65,8 @@ bool CalcSheetModel::setData(const QModelIndex &index, const QVariant &value, in
     if (raw.trimmed().isEmpty()) {
         m_data.remove({index.row(), index.column()});
     } else {
-        m_data[{index.row(), index.column()}] = Cell(CellType::STRING, raw);
+        auto cell = Cell::valueOf(m_locale, raw);
+        m_data[{index.row(), index.column()}] = cell;
     }
     
     emit dataChanged(index, index, {role});
