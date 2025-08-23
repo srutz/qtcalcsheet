@@ -15,12 +15,12 @@
 #include <QCoreApplication>
 
 CalcSheet::CalcSheet(QWidget *parent) : QWidget(parent),
-    formulaEngine(new FormulaEngine(this))
+    m_formulaEngine(new FormulaEngine(this))
 {
-    this->tableView = new QTableView(this);
+    this->m_tableView = new CalcTableView(this);
     // Set up live edit delegate
     auto liveDelegate = new LiveEditDelegate(this);
-    tableView->setItemDelegate(liveDelegate);
+    m_tableView->setItemDelegate(liveDelegate);
     auto mainLayout = new QVBoxLayout(this);
 
     auto topPanel = new QWidget(this);
@@ -31,63 +31,63 @@ CalcSheet::CalcSheet(QWidget *parent) : QWidget(parent),
     auto topLabel = new QLabel("f(x)", this);
     topLayout->addWidget(topLabel);
 
-    this->input = new QLineEdit(this);
-    topLayout->addWidget(input);
+    this->m_input = new QLineEdit(this);
+    topLayout->addWidget(m_input);
 
-    mainLayout->addWidget(tableView);
+    mainLayout->addWidget(m_tableView);
 
     // setup table
-    auto model = new CalcSheetModel(this);
-    tableView->setModel(model);
-    tableView->verticalHeader()->setVisible(true);
+    this->m_model = new CalcSheetModel(this);
+    m_tableView->setModel(m_model);
+    m_tableView->verticalHeader()->setVisible(true);
     // make table editable
-    tableView->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed | QAbstractItemView::AnyKeyPressed | QAbstractItemView::SelectedClicked);
-    tableView->verticalHeader()->setSectionsMovable(true);
-    tableView->horizontalHeader()->setSectionsMovable(true);
+    m_tableView->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed | QAbstractItemView::AnyKeyPressed | QAbstractItemView::SelectedClicked);
+    m_tableView->verticalHeader()->setSectionsMovable(true);
+    m_tableView->horizontalHeader()->setSectionsMovable(true);
 
     // navigate in table in excel style using keyboard
-    tableView->installEventFilter(this);
+    m_tableView->installEventFilter(this);
 
     // wire up table selection to input
-    connect(tableView->selectionModel(), &QItemSelectionModel::currentChanged, this, [this](const QModelIndex &current) {
-        this->input->setText(current.data().toString());
+    connect(m_tableView->selectionModel(), &QItemSelectionModel::currentChanged, this, [this](const QModelIndex &current) {
+        this->m_input->setText(current.data().toString());
     });
 
     // wire up enter press in the input
-    connect(input, &QLineEdit::returnPressed, this, [this]() {
-        QModelIndex current = tableView->currentIndex();
+    connect(m_input, &QLineEdit::returnPressed, this, [this]() {
+        QModelIndex current = m_tableView->currentIndex();
         if (!current.isValid()) {
             return;
         }
-        tableView->setFocus();
-        Util::selectNextTableRow(tableView);
+        m_tableView->setFocus();
+        Util::selectNextTableRow(m_tableView);
     });
 
     // while typing in the table, also update the input field
     connect(liveDelegate, &LiveEditDelegate::textEdited, this, [this](const QModelIndex &index, const QString &text) {
         //qDebug() << "Live text change in table cell" << index << ":" << text;
-        this->input->setText(text);
+        this->m_input->setText(text);
     });
     connect(liveDelegate, &LiveEditDelegate::editingFinished, this, [this](const QModelIndex &index, const QString &text) {
-        Util::selectNextTableRow(tableView);
+        Util::selectNextTableRow(m_tableView);
         // also stop editing in the table
         QTimer::singleShot(100, this, [this]() {
             // invoke esc key press on the tableview
             QKeyEvent *event = new QKeyEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
-            QCoreApplication::postEvent(tableView, event);
+            QCoreApplication::postEvent(m_tableView, event);
             qDebug() << "run escape key press event";
         });
     });
 
     // Track committed changes
-    connect(model, &QAbstractItemModel::dataChanged, this, [this](const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles) {
+    connect(m_model, &QAbstractItemModel::dataChanged, this, [this](const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles) {
         //qDebug() << "Committed table change from" << topLeft << "to" << bottomRight;
     });
 
     // while typing in the inputfield also update the current table value
-    connect(input, &QLineEdit::textChanged, this, [this](const QString &text) {
-        QModelIndex current = tableView->currentIndex();
-        qDebug() << "Input text changed:" << text << current.isValid();
+    connect(m_input, &QLineEdit::textChanged, this, [this](const QString &text) {
+        QModelIndex current = m_tableView->currentIndex();
+        //qDebug() << "Input text changed:" << text << current.isValid();
         if (!current.isValid()) {
             return;
         }
@@ -96,12 +96,25 @@ CalcSheet::CalcSheet(QWidget *parent) : QWidget(parent),
         model->setData(current, text);
     });
 
-    // handle cursor movements
+    // handle cursor movements and cell delections in the table
     connect(liveDelegate, &LiveEditDelegate::keyPressEvent, this, [this](const QModelIndex &index, QKeyEvent *event) {
         if (event->key() == Qt::Key_Up) {
-            Util::selectPreviousTableRow(tableView);
+            Util::selectPreviousTableRow(m_tableView);
         } else if (event->key() == Qt::Key_Down) {
-            Util::selectNextTableRow(tableView);
+            Util::selectNextTableRow(m_tableView);
+        }
+    });
+
+    // wire up key presses in the table for deletion and other keys
+    connect(m_tableView, &CalcTableView::keyPressed, this, [this](QKeyEvent *event) {
+        QModelIndex current = m_tableView->currentIndex();
+        if (!current.isValid()) {
+            return;
+        }
+        if (event->key() == Qt::Key_Delete || event->key() == Qt::Key_Backspace) {
+            // clear the cell
+            m_model->setData(current, "");
+            this->m_input->setText("");
         }
     });
 }

@@ -8,7 +8,7 @@
             "name": "gdb app",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/qtscreenshot",
+            "program": "${workspaceFolder}/build/qtcalcsheet",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",

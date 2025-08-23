@@ -30,6 +30,7 @@
             "__split_buffer": "cpp",
             "qobject": "cpp",
             "qimage": "cpp",
-            "qtableview": "cpp"
+            "qtableview": "cpp",
+            "ios": "cpp"
         },
 }

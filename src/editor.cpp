@@ -37,12 +37,20 @@ Editor::Editor() : QMainWindow()
     auto helpMenu = new QMenu("&Help", this);
     menuBar->addAction(helpMenu->menuAction());
 
-
     auto exitAction = new QAction("E&xit", this);
     connect(exitAction, &QAction::triggered, this, [this]() {
         QApplication::quit();
     });
     actionsMenu->addAction(exitAction);
+
+    auto dumpModelAction = new QAction("&Dump Model", this);
+    connect(dumpModelAction, &QAction::triggered, this, [this]() {
+        auto calcSheet = findChild<CalcSheet *>();
+        if (calcSheet) {
+            calcSheet->model()->dump();
+        }   
+    });
+    actionsMenu->addAction(dumpModelAction);
 
     auto aboutAction = new QAction("&About", this);
     connect(aboutAction, &QAction::triggered, this, [this]() {

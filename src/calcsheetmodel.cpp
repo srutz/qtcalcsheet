@@ -38,7 +38,7 @@ QVariant CalcSheetModel::headerData(int section, Qt::Orientation orientation, in
             return computeExcelColumnName(section);
         }
         else if (orientation == Qt::Vertical)
-        {
+        { 
             return QString::number(section + 1); // Row numbers starting from 1
         }
     }
@@ -51,7 +51,7 @@ bool CalcSheetModel::setData(const QModelIndex &index, const QVariant &value, in
     }
 
     auto raw = value.toString();
-    if (raw.isEmpty()) {
+    if (raw.trimmed().isEmpty()) {
         m_data.remove({index.row(), index.column()});
     } else {
         m_data[{index.row(), index.column()}] = Cell(CellType::STRING, raw);
@@ -65,4 +65,18 @@ Qt::ItemFlags CalcSheetModel::flags(const QModelIndex &index) const {
     if (!index.isValid())
         return Qt::NoItemFlags;
     return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
+}
+
+void CalcSheetModel::dump() const
+{
+    qDebug() << "Dumping model data:";
+    for (auto it = m_data.constBegin(); it != m_data.constEnd(); ++it) {
+        const Coord &coord = it.key();
+        const Cell &cell = it.value();
+        qDebug() << QString("Cell(%1, %2): Type=%3, Value=%4")
+                        .arg(coord.row)
+                        .arg(coord.column)
+                        .arg(cell.type())
+                        .arg(cell.value().toString());
+    }
 }
