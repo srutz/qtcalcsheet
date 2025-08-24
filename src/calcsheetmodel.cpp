@@ -93,8 +93,8 @@ void CalcSheetModel::dump() const
         if (cell.type() == CellType::FORMULA) {
             FormulaEngine engine;
             qDebug() << "  Formula text:" << cell.value().toString();
-            auto result = engine.parse(cell.value().toString(), {});
-            qDebug() << "  Formula:" << &result;
+            auto result = engine.evaluate(cell.value().toString(), {});
+            qDebug() << "  Formula:" << result;
         }
     }
 }

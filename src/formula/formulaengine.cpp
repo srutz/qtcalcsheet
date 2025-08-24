@@ -1,11 +1,17 @@
 
 #include "formulaengine.h"
 #include "excelnode.h"
+#include "../guard.h"
 #include <QDebug>
 #include <QtMath>
 
 extern int yyparse();
 extern std::shared_ptr<ExcelNode> parseResult;
+
+// External lexer functions
+extern void setInputString(const std::string& input);
+extern void cleanupLexer();
+extern void resetLexer();
 
 
 FormulaEngine::FormulaEngine(QObject *parent)
@@ -15,16 +21,22 @@ FormulaEngine::FormulaEngine(QObject *parent)
 
 std::shared_ptr<ExcelNode> FormulaEngine::parse(const QString &formula, const QHash<QString, QVariant> &variables) const
 {
+    Guard guard([]() { cleanupLexer(); });
+    // Reset parser state
+    parseResult = nullptr;
+    resetLexer();
+    
+    // Set up the input string for the lexer
+    std::string formulaStr = formula.toStdString();
+    setInputString(formulaStr);
+    
     // Parse the formula
     int parseStatus = yyparse();
-    qDebug() << "Parse status:" << parseStatus;
     if (parseStatus != 0) {
-        // Parse error occurred
         qDebug() << "Parse error in formula:" << formula;
         return nullptr;
     }
     if (!parseResult) {
-        // No result from parser
         qDebug() << "No parse result for formula:" << formula;
         return nullptr;
     }
