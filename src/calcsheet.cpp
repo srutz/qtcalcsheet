@@ -51,7 +51,12 @@ CalcSheet::CalcSheet(QWidget *parent) : QWidget(parent),
 
     // wire up table selection to input
     connect(m_tableView->selectionModel(), &QItemSelectionModel::currentChanged, this, [this](const QModelIndex &current) {
-        this->m_input->setText(current.data().toString());
+        auto cell = m_model->getCell(current);
+        if (cell) {
+            this->m_input->setText(cell->type() == FORMULA ? cell->formula() : cell->value().toString());
+        } else {
+            this->m_input->setText("");
+        }
     });
 
     // wire up enter press in the input

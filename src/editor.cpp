@@ -55,7 +55,7 @@ Editor::Editor() : QMainWindow()
     auto aboutAction = new QAction("&About", this);
     connect(aboutAction, &QAction::triggered, this, [this]() {
         auto msg = QString::fromUtf8(u8"🌟 Qt Calcsheet\n\n"
-            u8"🖼️ A simple screenshot tool.\n\n"
+            u8"🖼️ A simple spreadsheet.\n\n"
             u8"🖥️ Compile-Version: %1\n"
             u8"🕒 Runtime-Version: %2\n\n"
             u8"👨‍💻 Author: Stepan Rutz / stepan.rutz AT stepanrutz.com\n"

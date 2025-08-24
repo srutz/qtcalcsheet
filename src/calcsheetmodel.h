@@ -25,6 +25,8 @@ public:
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
 
+    std::shared_ptr<Cell> getCell(const QModelIndex &indext);
+
     void dump() const;
 
 signals:

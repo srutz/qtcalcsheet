@@ -28,10 +28,13 @@ public:
     void setType(CellType type);
     QVariant value() const;
     void setValue(const QVariant &value);
+    QString formula() const;
+    void setFormula(const QString &formula);
 
 private:
     CellType m_type;
     QVariant m_value;
+    QString m_formula;
 };
 
 #endif // CELL_H

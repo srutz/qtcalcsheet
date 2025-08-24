@@ -79,6 +79,15 @@ Qt::ItemFlags CalcSheetModel::flags(const QModelIndex &index) const {
     return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
 }
 
+std::shared_ptr<Cell> CalcSheetModel::getCell(const QModelIndex &index) {
+    Coord coord(index.row(), index.column());
+    if (!m_data.contains(coord)) {
+        return nullptr;
+    }
+    return std::make_shared<Cell>(m_data[coord]);
+}
+
+
 void CalcSheetModel::dump() const
 {
     qDebug() << "Dumping model data:";

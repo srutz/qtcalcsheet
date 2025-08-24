@@ -141,35 +141,35 @@ QVariant FormulaEngine::evaluateNode(std::shared_ptr<ExcelNode> node, const QHas
 
 void FormulaEngine::dumpNode(std::shared_ptr<ExcelNode> node, int indent = 0) const {
     if (!node) return;
-    string indentStr(indent * 2, ' ');
+    auto indentStr = QString::fromStdString(string(indent * 2, ' '));
     
     switch (node->type) {
         case NODE_NUMBER:
-            qDebug() << indentStr << "NUMBER: " << node->value;
+            qDebug() << indentStr << "NUMBER: " << QString::fromStdString(node->value);
             break;
         case NODE_STRING:
-            qDebug() << indentStr << "STRING: " << node->value;
+            qDebug() << indentStr << "STRING: " << QString::fromStdString(node->value);
             break;
         case NODE_CELL_REF:
-            qDebug() << indentStr << "CELL: " << node->value;
+            qDebug() << indentStr << "CELL: " << QString::fromStdString(node->value);
             break;
         case NODE_RANGE:
-            qDebug() << indentStr << "RANGE: " << node->value;
+            qDebug() << indentStr << "RANGE: " << QString::fromStdString(node->value);
             break;
         case NODE_FUNCTION:
-            qDebug() << indentStr << "FUNCTION: " << node->value;
+            qDebug() << indentStr << "FUNCTION: " << QString::fromStdString(node->value);
             for (auto& child : node->children) {
                 dumpNode(child, indent + 1);
             }
             break;
         case NODE_BINARY_OP:
-            qDebug() << indentStr << "BINARY_OP: " << node->op;
+            qDebug() << indentStr << "BINARY_OP: " << QString::fromStdString(node->op);
             for (auto& child : node->children) {
                 dumpNode(child, indent + 1);
             }
             break;
         case NODE_UNARY_OP:
-            qDebug() << indentStr << "UNARY_OP: " << node->op;
+            qDebug() << indentStr << "UNARY_OP: " << QString::fromStdString(node->op);
             for (auto& child : node->children) {
                 dumpNode(child, indent + 1);
             }

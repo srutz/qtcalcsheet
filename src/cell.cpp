@@ -1,5 +1,6 @@
 #include "cell.h"
 #include "util.h"
+#include "formulaengine.h"
 #include <QDate>
 
 Cell Cell::valueOf(const QLocale &locale, const QString &raw) {
@@ -9,7 +10,12 @@ Cell Cell::valueOf(const QLocale &locale, const QString &raw) {
     }
     // Check for formula
     if (trimmed.startsWith('=')) {
-        return Cell(CellType::FORMULA, trimmed.mid(1).trimmed());
+        FormulaEngine engine;
+        auto formula = trimmed.mid(1).trimmed();
+        auto computedValue = engine.evaluate(formula, {});
+        auto cell = Cell(CellType::FORMULA, computedValue);
+        cell.setFormula(formula);
+        return cell;
     }
     // Check for boolean
     if (trimmed.compare("TRUE", Qt::CaseInsensitive) == 0) {
@@ -48,3 +54,6 @@ void Cell::setType(CellType type) { m_type = type; }
 
 QVariant Cell::value() const { return m_value; }
 void Cell::setValue(const QVariant &value) { m_value = value; }
+
+QString Cell::formula() const { return m_formula; }
+void Cell::setFormula(const QString &formula) { m_formula = formula; }
