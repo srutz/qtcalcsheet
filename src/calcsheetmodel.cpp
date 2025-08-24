@@ -1,5 +1,6 @@
 
 #include "calcsheetmodel.h"
+#include "formulaengine.h"
 
 static QString computeExcelColumnName(int col)
 {
@@ -89,5 +90,11 @@ void CalcSheetModel::dump() const
                         .arg(coord.column)
                         .arg(cell.type())
                         .arg(cell.value().toString());
+        if (cell.type() == CellType::FORMULA) {
+            FormulaEngine engine;
+            qDebug() << "  Formula text:" << cell.value().toString();
+            auto result = engine.parse(cell.value().toString(), {});
+            qDebug() << "  Formula:" << &result;
+        }
     }
 }
