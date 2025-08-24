@@ -15,6 +15,7 @@ class CalcSheet : public QWidget
     QLineEdit *m_input;
     CalcSheetModel *m_model;
     CalcTableView *m_tableView;
+    bool m_changingInput = false;
 
 public:
     CalcSheet(QWidget *parent = nullptr);

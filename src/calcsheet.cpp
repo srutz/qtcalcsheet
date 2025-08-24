@@ -2,6 +2,7 @@
 #include "calcsheetmodel.h"
 #include "util.h"
 #include "liveeditdelegate.h"
+#include "guard.h"
 #include <QVBoxLayout>
 #include <QHeaderView>
 #include <QLineEdit>
@@ -63,20 +64,16 @@ CalcSheet::CalcSheet(QWidget *parent) : QWidget(parent),
         Util::selectNextTableRow(m_tableView);
     });
 
-    // while typing in the table, also update the input field
+    // while typing in the table, also update the input field but prevent event cycles
     connect(liveDelegate, &LiveEditDelegate::textEdited, this, [this](const QModelIndex &index, const QString &text) {
-        //qDebug() << "Live text change in table cell" << index << ":" << text;
+        Guard guard([this]() { m_changingInput = false; });
+        m_changingInput = true;
         this->m_input->setText(text);
     });
+
+    // move to next row on enter in the table
     connect(liveDelegate, &LiveEditDelegate::editingFinished, this, [this](const QModelIndex &index, const QString &text) {
         Util::selectNextTableRow(m_tableView);
-        // also stop editing in the table
-        QTimer::singleShot(100, this, [this]() {
-            // invoke esc key press on the tableview
-            QKeyEvent *event = new QKeyEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
-            QCoreApplication::postEvent(m_tableView, event);
-            qDebug() << "run escape key press event";
-        });
     });
 
     // Track committed changes
@@ -86,6 +83,9 @@ CalcSheet::CalcSheet(QWidget *parent) : QWidget(parent),
 
     // while typing in the inputfield also update the current table value
     connect(m_input, &QLineEdit::textChanged, this, [this](const QString &text) {
+        if (m_changingInput) {
+            return;
+        }
         QModelIndex current = m_tableView->currentIndex();
         //qDebug() << "Input text changed:" << text << current.isValid();
         if (!current.isValid()) {
@@ -112,8 +112,11 @@ CalcSheet::CalcSheet(QWidget *parent) : QWidget(parent),
             return;
         }
         if (event->key() == Qt::Key_Delete || event->key() == Qt::Key_Backspace) {
-            // clear the cell
-            m_model->setData(current, "");
+            // clear all selected cells
+            auto selection = m_tableView->selectionModel()->selectedIndexes();
+            for (const QModelIndex &idx : selection) {
+                this->m_model->setData(idx, "");
+            }
             this->m_input->setText("");
         }
     });

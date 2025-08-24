@@ -26,7 +26,6 @@ void CalcSheetModel::setLocale(const QLocale &locale) {
     }
 }
 
-
 QVariant CalcSheetModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid() || role != Qt::DisplayRole) {

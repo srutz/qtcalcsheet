@@ -32,6 +32,7 @@
             "qimage": "cpp",
             "qtableview": "cpp",
             "ios": "cpp",
-            "qlocale": "cpp"
+            "qlocale": "cpp",
+            "qlineedit": "cpp"
         },
 }
