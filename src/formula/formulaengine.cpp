@@ -16,7 +16,8 @@ FormulaEngine::FormulaEngine(QObject *parent)
 std::shared_ptr<ExcelNode> FormulaEngine::parse(const QString &formula, const QHash<QString, QVariant> &variables) const
 {
     // Parse the formula
-    int parseStatus = yyparse();        
+    int parseStatus = yyparse();
+    qDebug() << "Parse status:" << parseStatus;
     if (parseStatus != 0) {
         // Parse error occurred
         qDebug() << "Parse error in formula:" << formula;
